@@ -9,7 +9,7 @@
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 	<artifactId>product-service</artifactId>
-	<name/>
+	<name>product-service</name>
 	<description/>
 	<url/>
 	<licenses>
