@@ -1,0 +1,12 @@
+services:
+  mysql:
+    image: mysql:8.3.0
+    container_name: inventory-service-mysql
+    ports:
+      - "3307:3306"
+      #Kyuki host machine ke 3306 port pr Order Service ka MySQL run ho raha hoga
+    environment:
+      MYSQL_ROOT_PASSWORD: mysql
+      MYSQL_DATABASE: inventory_service
+    volumes:
+      - ./docker/mysql/data:/var/lib/mysql
