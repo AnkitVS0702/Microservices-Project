@@ -1,13 +1,13 @@
-package com.ankitshiksharthi.microserviceproject.e_commerce;
+package com.ankitshiksharthi.microserviceproject.product_service;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class ECommerceApplication {
+public class ProductServiceApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(ECommerceApplication.class, args);
+		SpringApplication.run(ProductServiceApplication.class, args);
 	}
 
 }
