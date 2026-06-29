@@ -1,0 +1,36 @@
+{
+  "namespace": "com.ankitshiksharthi.microserviceproject.payment_service.event",
+  "type": "record",
+  "name": "PaymentCompletedEvent",
+  "fields": [
+    {
+      "name": "paymentId",
+      "type": "string"
+    },
+    {
+      "name": "orderId",
+      "type": "string"
+    },
+    {
+      "name": "orderNumber",
+      "type": "string"
+    },
+    {
+      "name": "amount",
+      "type": "double"
+    },
+    {
+      "name": "transactionId",
+      "type": "string"
+    },
+    {
+      "name": "paymentMethod",
+      "type": "string"
+    },
+    {
+      "name": "timestamp",
+      "type": "long"
+    }
+  ]
+}
+

@@ -15,6 +15,9 @@ public record ProductRequest(
         String skuCode,
         @NotNull(message = "Product price is required")
         @Positive(message = "Product price must be positive")
-        BigDecimal price
+        BigDecimal price,
+        Long vendorId,
+        String category,
+        String imageUrl
 ) {
 }

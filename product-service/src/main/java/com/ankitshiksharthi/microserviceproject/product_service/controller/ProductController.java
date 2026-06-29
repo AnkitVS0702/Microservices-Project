@@ -24,7 +24,17 @@ public class ProductController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<ProductResponse> getAllProducts() {
+    public List<ProductResponse> getAllProducts(
+            @RequestParam(required = false) String status) {
+        if (status != null) {
+            return productService.getProductsByStatus(status);
+        }
         return productService.getAllProducts();
+    }
+
+    @GetMapping("/vendor/{vendorId}")
+    @ResponseStatus(HttpStatus.OK)
+    public List<ProductResponse> getProductsByVendor(@PathVariable Long vendorId) {
+        return productService.getProductsByVendor(vendorId);
     }
 }

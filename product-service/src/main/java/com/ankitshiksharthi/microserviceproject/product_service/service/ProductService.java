@@ -22,15 +22,36 @@ public class ProductService {
                 .description(productRequest.description())
                 .skuCode(productRequest.skuCode())
                 .price(productRequest.price())
+                .vendorId(productRequest.vendorId())
+                .category(productRequest.category())
+                .imageUrl(productRequest.imageUrl())
+                .status(productRequest.vendorId() != null ? "PENDING_APPROVAL" : "ACTIVE")
                 .build();
         productRepository.save(product);
-        log.info("Product created successfully");
+        log.info("Product created successfully with status: {}", product.getStatus());
         return mapToProductResponse(product);
     }
 
     public List<ProductResponse> getAllProducts() {
         return productRepository.findAll()
                 .stream()
+                .filter(p -> "ACTIVE".equals(p.getStatus()))
+                .map(this::mapToProductResponse)
+                .toList();
+    }
+
+    public List<ProductResponse> getProductsByStatus(String status) {
+        return productRepository.findAll()
+                .stream()
+                .filter(p -> status.equals(p.getStatus()))
+                .map(this::mapToProductResponse)
+                .toList();
+    }
+
+    public List<ProductResponse> getProductsByVendor(Long vendorId) {
+        return productRepository.findAll()
+                .stream()
+                .filter(p -> vendorId.equals(p.getVendorId()))
                 .map(this::mapToProductResponse)
                 .toList();
     }
@@ -42,6 +63,10 @@ public class ProductService {
                 product.getDescription(),
                 product.getSkuCode(),
                 product.getPrice(),
+                product.getVendorId(),
+                product.getStatus(),
+                product.getCategory(),
+                product.getImageUrl(),
                 product.getCreatedAt(),
                 product.getUpdatedAt()
         );

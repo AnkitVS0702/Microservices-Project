@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 public record ProductResponse(String id, String name, String description,
-                               String skuCode, BigDecimal price,
-                               LocalDateTime createdAt, LocalDateTime updatedAt) {
+                              String skuCode, BigDecimal price, Long vendorId,
+                              String status, String category, String imageUrl,
+                              LocalDateTime createdAt, LocalDateTime updatedAt) {
 }

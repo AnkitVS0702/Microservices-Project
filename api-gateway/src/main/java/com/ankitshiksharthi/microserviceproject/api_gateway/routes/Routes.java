@@ -84,6 +84,48 @@ public class Routes {
       }
 
     @Bean
+    public RouterFunction<ServerResponse> userServiceRoute() {
+        return route("user_service")
+            .route(RequestPredicates.path("/api/users/**"), HandlerFunctions.http(URI.create("lb://user-service")))
+            .filter(circuitBreaker("userServiceCircuitBreaker", URI.create("forward:/fallbackRoute")))
+            .build();
+    }
+
+    @Bean
+    public RouterFunction<ServerResponse> userServiceSwaggerRoute() {
+        return route("user_service_swagger")
+            .route(RequestPredicates.path("/aggregate/user-service/v3/api-docs"), HandlerFunctions.http(URI.create("lb://user-service")))
+            .filter(circuitBreaker("userServiceSwaggerCircuitBreaker", URI.create("forward:/fallbackRoute")))
+            .filter(setPath("/api-docs"))
+            .build();
+    }
+
+    @Bean
+    public RouterFunction<ServerResponse> adminRouteRoute() {
+        return route("admin_route")
+            .route(RequestPredicates.path("/api/admin/**"), HandlerFunctions.http(URI.create("lb://user-service")))
+            .filter(circuitBreaker("adminCircuitBreaker", URI.create("forward:/fallbackRoute")))
+            .build();
+    }
+
+    @Bean
+    public RouterFunction<ServerResponse> paymentServiceRoute() {
+        return route("payment_service")
+            .route(RequestPredicates.path("/api/v1/payments/**"), HandlerFunctions.http(URI.create("lb://payment-service")))
+            .filter(circuitBreaker("paymentServiceCircuitBreaker", URI.create("forward:/fallbackRoute")))
+            .build();
+    }
+
+    @Bean
+    public RouterFunction<ServerResponse> paymentServiceSwaggerRoute() {
+        return route("payment_service_swagger")
+            .route(RequestPredicates.path("/aggregate/payment-service/v3/api-docs"), HandlerFunctions.http(URI.create("lb://payment-service")))
+            .filter(circuitBreaker("paymentServiceSwaggerCircuitBreaker", URI.create("forward:/fallbackRoute")))
+            .filter(setPath("/api-docs"))
+            .build();
+    }
+
+    @Bean
     public RouterFunction<ServerResponse> fallbackRoute() {
         return route("fallbackRoute")
                 .GET("/fallbackRoute",

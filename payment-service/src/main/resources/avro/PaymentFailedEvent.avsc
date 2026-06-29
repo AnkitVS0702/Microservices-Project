@@ -1,0 +1,36 @@
+{
+  "namespace": "com.ankitshiksharthi.microserviceproject.payment_service.event",
+  "type": "record",
+  "name": "PaymentFailedEvent",
+  "fields": [
+    {
+      "name": "paymentId",
+      "type": "string"
+    },
+    {
+      "name": "orderId",
+      "type": "string"
+    },
+    {
+      "name": "orderNumber",
+      "type": "string"
+    },
+    {
+      "name": "amount",
+      "type": "double"
+    },
+    {
+      "name": "paymentMethod",
+      "type": "string"
+    },
+    {
+      "name": "failureReason",
+      "type": "string"
+    },
+    {
+      "name": "timestamp",
+      "type": "long"
+    }
+  ]
+}
+

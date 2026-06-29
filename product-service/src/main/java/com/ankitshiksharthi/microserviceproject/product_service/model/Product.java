@@ -22,6 +22,10 @@ public class Product {
     private String description;
     private String skuCode;
     private BigDecimal price;
+    private Long vendorId;
+    private String status; // PENDING_APPROVAL, ACTIVE, REJECTED, ARCHIVED
+    private String category;
+    private String imageUrl;
 
     @CreatedDate
     private LocalDateTime createdAt;
