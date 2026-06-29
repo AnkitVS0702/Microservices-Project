@@ -29,6 +29,7 @@
 
 	<packaging>pom</packaging>
 	<modules>
+		<module>discovery-server</module>
 		<module>product-service</module>
 		<module>api-gateway</module>
 		<module>inventory-service</module>

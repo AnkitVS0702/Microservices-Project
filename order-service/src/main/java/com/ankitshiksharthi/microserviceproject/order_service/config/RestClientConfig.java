@@ -4,16 +4,12 @@ import com.ankitshiksharthi.microserviceproject.order_service.client.InventoryCl
 import io.micrometer.observation.ObservationRegistry;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.http.client.ClientHttpRequestFactorySettings;
-import org.springframework.boot.web.client.ClientHttpRequestFactories;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.client.ClientHttpRequestFactory;
+import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.support.RestClientAdapter;
 import org.springframework.web.service.invoker.HttpServiceProxyFactory;
-
-import java.time.Duration;
 
 @Configuration
 @RequiredArgsConstructor
@@ -22,12 +18,15 @@ public class RestClientConfig {
     private String inventoryServiceUrl;
     private final ObservationRegistry observationRegistry;
 
-    @Bean
-    public InventoryClient inventoryClient() {
-        RestClient restClient = RestClient.builder()
-                .baseUrl(inventoryServiceUrl)
-                .observationRegistry(observationRegistry)
-                .build();
+  @Bean
+  @LoadBalanced
+  public RestClient.Builder restClientBuilder() {
+    return RestClient.builder().observationRegistry(observationRegistry);
+  }
+
+  @Bean
+  public InventoryClient inventoryClient(RestClient.Builder restClientBuilder) {
+    RestClient restClient = restClientBuilder.baseUrl(inventoryServiceUrl).build();
         var restClientAdapter = RestClientAdapter.create(restClient);
         var httpServiceProxyFactory = HttpServiceProxyFactory.builderFor(restClientAdapter).build();
         return httpServiceProxyFactory.createClient(InventoryClient.class);
