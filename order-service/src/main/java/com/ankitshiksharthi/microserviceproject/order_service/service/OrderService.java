@@ -6,16 +6,15 @@ import com.ankitshiksharthi.microserviceproject.order_service.event.OrderPlacedE
 import com.ankitshiksharthi.microserviceproject.order_service.model.Order;
 import com.ankitshiksharthi.microserviceproject.order_service.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
 import java.util.UUID;
-
-import static com.ankitshiksharthi.microserviceproject.order_service.client.InventoryClient.log;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class OrderService {
 
     private final OrderRepository orderRepository;
@@ -25,9 +24,9 @@ public class OrderService {
     public void placeOrder(OrderRequest orderRequest) {
 
         // first check whether it exists it inventory or not
-        var isProductAvailable= inventoryClient.isInStock(orderRequest.skuCode(),orderRequest.quantity());
+        var isProductAvailable = inventoryClient.isInStock(orderRequest.skuCode(), orderRequest.quantity());
         //then place order
-        if(isProductAvailable) {
+        if (isProductAvailable) {
             Order order = new Order();
             order.setOrderNumber(UUID.randomUUID().toString());
             order.setPrice(orderRequest.price());
@@ -44,8 +43,8 @@ public class OrderService {
             log.info("Start - Sending OrderPlacedEvent {} to Kafka topic order-placed", orderPlacedEvent);
             kafkaTemplate.send("order-placed", orderPlacedEvent);
             log.info("End - Sending OrderPlacedEvent {} to Kafka topic order-placed", orderPlacedEvent);
-        }else{
-            throw new RuntimeException("Product with skuCode "+orderRequest.skuCode() +" not in stock");
+        } else {
+            throw new RuntimeException("Product with skuCode " + orderRequest.skuCode() + " not in stock");
         }
     }
 }

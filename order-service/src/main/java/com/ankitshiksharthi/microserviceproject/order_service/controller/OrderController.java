@@ -1,8 +1,8 @@
 package com.ankitshiksharthi.microserviceproject.order_service.controller;
 
-
 import com.ankitshiksharthi.microserviceproject.order_service.dto.OrderRequest;
 import com.ankitshiksharthi.microserviceproject.order_service.service.OrderService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -17,7 +17,7 @@ public class OrderController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public String placeOrder(@RequestBody OrderRequest orderRequest) {
+    public String placeOrder(@Valid @RequestBody OrderRequest orderRequest) {
         orderService.placeOrder(orderRequest);
         return "Order Placed Successfully";
     }

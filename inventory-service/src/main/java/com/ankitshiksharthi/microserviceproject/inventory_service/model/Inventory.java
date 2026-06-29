@@ -5,6 +5,10 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "inventory")
@@ -18,4 +22,7 @@ public class Inventory {
     private Long id;
     private String skuCode;
     private Integer quantity;
+
+    @UpdateTimestamp
+    private LocalDateTime lastUpdated;
 }

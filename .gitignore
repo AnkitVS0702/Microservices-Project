@@ -32,4 +32,18 @@ build/
 ### VS Code ###
 .vscode/
 
+### Logs ###
 *.log
+hs_err_pid*.log
+replay_pid*.log
+
+### Docker volume data ###
+**/data/
+**/volume-data/
+
+### Environment files ###
+.env
+.env.local
+
+### Node (Frontend) ###
+node_modules/
