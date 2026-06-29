@@ -66,6 +66,23 @@ public class Routes {
                 .build();
     }
 
+      @Bean
+      public RouterFunction<ServerResponse> cartServiceRoute() {
+        return route("cart_service")
+            .route(RequestPredicates.path("/api/cart/**"), HandlerFunctions.http(URI.create("lb://cart-service")))
+            .filter(circuitBreaker("cartServiceCircuitBreaker", URI.create("forward:/fallbackRoute")))
+            .build();
+      }
+
+      @Bean
+      public RouterFunction<ServerResponse> cartServiceSwaggerRoute() {
+        return route("cart_service_swagger")
+            .route(RequestPredicates.path("/aggregate/cart-service/v3/api-docs"), HandlerFunctions.http(URI.create("lb://cart-service")))
+            .filter(circuitBreaker("cartServiceSwaggerCircuitBreaker", URI.create("forward:/fallbackRoute")))
+            .filter(setPath("/api-docs"))
+            .build();
+      }
+
     @Bean
     public RouterFunction<ServerResponse> fallbackRoute() {
         return route("fallbackRoute")
