@@ -61,15 +61,13 @@ services:
       - "6379:6379"
 
   user-service-mysql:
-    container_name: user-service-mysql
+    container_name: users-service-mysql
     image: mysql:8
     environment:
       MYSQL_ROOT_PASSWORD: password
       MYSQL_DATABASE: user_service
-      MYSQL_USER: root
-      MYSQL_PASSWORD: password
     ports:
-      - "3309:3306"
+      - "3312:3306"
     volumes:
       - ./volume-data/mysql_user_service_data:/var/lib/mysql
 
@@ -79,8 +77,6 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: password
       MYSQL_DATABASE: payment_service
-      MYSQL_USER: root
-      MYSQL_PASSWORD: password
     ports:
       - "3310:3306"
     volumes:
