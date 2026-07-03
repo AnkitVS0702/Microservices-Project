@@ -6,16 +6,12 @@ import jakarta.validation.constraints.*;
 import java.math.BigDecimal;
 
 public record OrderRequest(
-        @NotBlank(message = "SKU code is required")
-        String skuCode,
+        @NotNull(message = "Order items cannot be null")
+        @NotEmpty(message = "Order must have at least one item")
+        java.util.List<@Valid OrderLineItemRequest> orderItems,
 
-        @NotNull(message = "Price is required")
-        @Positive(message = "Price must be positive")
-        BigDecimal price,
-
-        @NotNull(message = "Quantity is required")
-        @Min(value = 1, message = "Quantity must be at least 1")
-        Integer quantity,
+        @NotBlank(message = "Address is required")
+        String address,
 
         @NotNull(message = "User details are required")
         @Valid

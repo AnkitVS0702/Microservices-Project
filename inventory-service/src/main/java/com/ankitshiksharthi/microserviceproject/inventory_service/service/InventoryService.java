@@ -15,4 +15,20 @@ public class InventoryService {
         boolean isInStock = inventoryRepository.existsBySkuCodeAndQuantityIsGreaterThanEqual(skuCode, quantity);
         return isInStock;
     }
+
+    public void addInventory(com.ankitshiksharthi.microserviceproject.inventory_service.dto.InventoryRequest request) {
+        inventoryRepository.findBySkuCode(request.getSkuCode()).ifPresentOrElse(
+            inventory -> {
+                inventory.setQuantity(inventory.getQuantity() + request.getQuantity());
+                inventoryRepository.save(inventory);
+            },
+            () -> {
+                com.ankitshiksharthi.microserviceproject.inventory_service.model.Inventory inventory = new com.ankitshiksharthi.microserviceproject.inventory_service.model.Inventory();
+                inventory.setSkuCode(request.getSkuCode());
+                inventory.setQuantity(request.getQuantity());
+                inventory.setReservedQuantity(0);
+                inventoryRepository.save(inventory);
+            }
+        );
+    }
 }

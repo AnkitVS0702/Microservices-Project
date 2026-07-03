@@ -27,8 +27,8 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(freeResourceUrls).permitAll()
-                        // Registration is public (no token needed)
-                        .requestMatchers(HttpMethod.POST, "/api/users/register").permitAll()
+                        // Registration and Login are public (no token needed)
+                        .requestMatchers(HttpMethod.POST, "/api/users/register", "/api/users/login").permitAll()
                         // Product browsing is public
                         .requestMatchers(HttpMethod.GET, "/api/product/**", "/api/product").permitAll()
                         // Product management is admin-only

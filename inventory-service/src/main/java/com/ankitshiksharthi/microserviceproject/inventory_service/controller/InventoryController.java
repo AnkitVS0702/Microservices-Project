@@ -16,4 +16,10 @@ public class InventoryController {
     public boolean isInStock(@RequestParam String skuCode, @RequestParam Integer quantity) {
         return inventoryService.isInStock(skuCode, quantity);
     }
+
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    public void addInventory(@RequestBody com.ankitshiksharthi.microserviceproject.inventory_service.dto.InventoryRequest request) {
+        inventoryService.addInventory(request);
+    }
 }

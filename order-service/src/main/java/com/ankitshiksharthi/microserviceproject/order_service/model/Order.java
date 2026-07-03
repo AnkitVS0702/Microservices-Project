@@ -7,7 +7,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-
+import java.util.List;
 @Entity
 @Table(name = "orders")
 @Getter
@@ -19,10 +19,13 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String orderNumber;
-    private String skuCode;
-    private BigDecimal price;
-    private Integer quantity;
+    private BigDecimal totalAmount;
+    private String address;
     private String email;
+
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "order_id")
+    private List<OrderLineItem> orderLineItems;
 
     @CreationTimestamp
     @Column(updatable = false)

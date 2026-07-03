@@ -6,9 +6,8 @@ import java.time.LocalDateTime;
 public record OrderResponse(
         Long id,
         String orderNumber,
-        String skuCode,
-        String productName,
-        BigDecimal price,
-        Integer quantity,
+        java.util.List<OrderLineItemResponse> orderItems,
+        String address,
+        BigDecimal totalAmount,
         LocalDateTime orderDate
 ) {}

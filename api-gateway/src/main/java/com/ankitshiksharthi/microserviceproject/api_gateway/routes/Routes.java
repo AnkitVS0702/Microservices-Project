@@ -79,6 +79,7 @@ public class Routes {
             .route(RequestPredicates.path("/api/cart/**"), HandlerFunctions.http())
             .filter(lb("cart-service"))
             .filter(circuitBreaker("cartServiceCircuitBreaker", URI.create("forward:/fallbackRoute")))
+            .filter(new com.ankitshiksharthi.microserviceproject.api_gateway.config.IdentityFilterFunction())
             .build();
     }
 
