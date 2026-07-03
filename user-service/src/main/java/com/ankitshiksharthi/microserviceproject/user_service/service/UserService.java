@@ -2,6 +2,7 @@ package com.ankitshiksharthi.microserviceproject.user_service.service;
 
 import com.ankitshiksharthi.microserviceproject.user_service.dto.RegisterUserRequest;
 import com.ankitshiksharthi.microserviceproject.user_service.dto.UserResponse;
+import com.ankitshiksharthi.microserviceproject.user_service.dto.UpdateUserProfileRequest;
 import com.ankitshiksharthi.microserviceproject.user_service.model.User;
 import com.ankitshiksharthi.microserviceproject.user_service.model.enums.UserRole;
 import com.ankitshiksharthi.microserviceproject.user_service.model.enums.UserStatus;
@@ -17,21 +18,32 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 public class UserService {
     private final UserRepository userRepository;
+    private final KeycloakService keycloakService;
 
     public UserResponse registerUser(RegisterUserRequest request) {
         log.info("Registering new user with email: {}", request.getEmail());
 
-        // Check if user already exists
+        // Check if user already exists in our database
         if (userRepository.findByEmail(request.getEmail()).isPresent()) {
             throw new RuntimeException("User with email " + request.getEmail() + " already exists");
         }
 
+        // Create user in Keycloak first (with password and CUSTOMER role)
+        String keycloakId = keycloakService.createUser(
+                request.getEmail(),
+                request.getPassword(),
+                request.getFirstName(),
+                request.getLastName()
+        );
+
+        // Save user to our database with the Keycloak ID
         User user = User.builder()
                 .email(request.getEmail())
                 .firstName(request.getFirstName())
                 .lastName(request.getLastName())
                 .phone(request.getPhone())
-                .keycloakId(request.getKeycloakId())
+                .address(request.getAddress())
+                .keycloakId(keycloakId)
                 .role(UserRole.CUSTOMER)  // Default role
                 .status(UserStatus.ACTIVE)
                 .build();
@@ -66,6 +78,20 @@ public class UserService {
         return mapToResponse(user);
     }
 
+    public UserResponse updateUserProfile(Long userId, UpdateUserProfileRequest request) {
+        log.info("Updating user profile for userId: {}", userId);
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found with id: " + userId));
+        
+        user.setFirstName(request.getFirstName());
+        user.setLastName(request.getLastName());
+        user.setPhone(request.getPhone());
+        user.setAddress(request.getAddress());
+        
+        User updatedUser = userRepository.save(user);
+        return mapToResponse(updatedUser);
+    }
+
     private UserResponse mapToResponse(User user) {
         return UserResponse.builder()
                 .id(user.getId())
@@ -74,6 +100,7 @@ public class UserService {
                 .firstName(user.getFirstName())
                 .lastName(user.getLastName())
                 .phone(user.getPhone())
+                .address(user.getAddress())
                 .role(user.getRole())
                 .status(user.getStatus())
                 .createdAt(user.getCreatedAt())

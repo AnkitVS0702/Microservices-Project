@@ -1,0 +1,13 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="All other microservices" type="CompoundRunConfigurationType">
+    <toRun name="ApiGateway" type="SpringBootApplicationConfigurationType" />
+    <toRun name="CartServive" type="SpringBootApplicationConfigurationType" />
+    <toRun name="InventoryServiceApplication" type="SpringBootApplicationConfigurationType" />
+    <toRun name="NotificationService" type="SpringBootApplicationConfigurationType" />
+    <toRun name="OrderServiceApplication" type="SpringBootApplicationConfigurationType" />
+    <toRun name="PaymentServiceApplication" type="SpringBootApplicationConfigurationType" />
+    <toRun name="ProductServiceApplication" type="SpringBootApplicationConfigurationType" />
+    <toRun name="UserServiceApplication" type="SpringBootApplicationConfigurationType" />
+    <method v="2" />
+  </configuration>
+</component>

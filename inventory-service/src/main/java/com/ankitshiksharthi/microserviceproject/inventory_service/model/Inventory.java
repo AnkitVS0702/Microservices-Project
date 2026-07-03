@@ -22,7 +22,6 @@ public class Inventory {
     private Long id;
     private String skuCode;
     private Integer quantity;
-    private Long vendorId;
     private Integer reservedQuantity;
 
     @UpdateTimestamp

@@ -10,10 +10,13 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class ApprovalRequestUpdateRequest {
-    @NotBlank(message = "Action is required (approve/reject)")
-    private String action; // "approve" or "reject"
+public class UpdateUserProfileRequest {
+    @NotBlank(message = "First name is required")
+    private String firstName;
 
-    private String adminNotes;
+    @NotBlank(message = "Last name is required")
+    private String lastName;
+
+    private String phone;
+    private String address;
 }
-

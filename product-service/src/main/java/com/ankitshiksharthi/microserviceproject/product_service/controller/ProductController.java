@@ -32,9 +32,9 @@ public class ProductController {
         return productService.getAllProducts();
     }
 
-    @GetMapping("/vendor/{vendorId}")
+    @GetMapping("/sku/{skuCode}")
     @ResponseStatus(HttpStatus.OK)
-    public List<ProductResponse> getProductsByVendor(@PathVariable Long vendorId) {
-        return productService.getProductsByVendor(vendorId);
+    public ProductResponse getProductBySkuCode(@PathVariable String skuCode) {
+        return productService.getProductBySkuCode(skuCode);
     }
 }

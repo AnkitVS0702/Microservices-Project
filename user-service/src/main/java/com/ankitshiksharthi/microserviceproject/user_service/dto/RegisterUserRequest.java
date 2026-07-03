@@ -24,5 +24,9 @@ public class RegisterUserRequest {
 
     private String phone;
     private String keycloakId;
+    private String address;
+
+    @NotBlank(message = "Password is required")
+    private String password;
 }
 

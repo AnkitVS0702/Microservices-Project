@@ -1,6 +1,7 @@
 package com.ankitshiksharthi.microserviceproject.order_service.config;
 
 import com.ankitshiksharthi.microserviceproject.order_service.client.InventoryClient;
+import com.ankitshiksharthi.microserviceproject.order_service.client.ProductClient;
 import io.micrometer.observation.ObservationRegistry;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,19 +17,31 @@ import org.springframework.web.service.invoker.HttpServiceProxyFactory;
 public class RestClientConfig {
     @Value("${inventory.url}")
     private String inventoryServiceUrl;
+
+    @Value("${product.url}")
+    private String productServiceUrl;
+
     private final ObservationRegistry observationRegistry;
 
-  @Bean
-  @LoadBalanced
-  public RestClient.Builder restClientBuilder() {
-    return RestClient.builder().observationRegistry(observationRegistry);
-  }
+    @Bean
+    @LoadBalanced
+    public RestClient.Builder restClientBuilder() {
+        return RestClient.builder().observationRegistry(observationRegistry);
+    }
 
-  @Bean
-  public InventoryClient inventoryClient(RestClient.Builder restClientBuilder) {
-    RestClient restClient = restClientBuilder.baseUrl(inventoryServiceUrl).build();
+    @Bean
+    public InventoryClient inventoryClient(RestClient.Builder restClientBuilder) {
+        RestClient restClient = restClientBuilder.baseUrl(inventoryServiceUrl).build();
         var restClientAdapter = RestClientAdapter.create(restClient);
         var httpServiceProxyFactory = HttpServiceProxyFactory.builderFor(restClientAdapter).build();
         return httpServiceProxyFactory.createClient(InventoryClient.class);
+    }
+
+    @Bean
+    public ProductClient productClient(RestClient.Builder restClientBuilder) {
+        RestClient restClient = restClientBuilder.baseUrl(productServiceUrl).build();
+        var restClientAdapter = RestClientAdapter.create(restClient);
+        var httpServiceProxyFactory = HttpServiceProxyFactory.builderFor(restClientAdapter).build();
+        return httpServiceProxyFactory.createClient(ProductClient.class);
     }
 }

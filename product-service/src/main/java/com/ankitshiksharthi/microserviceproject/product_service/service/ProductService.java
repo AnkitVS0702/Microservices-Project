@@ -22,10 +22,9 @@ public class ProductService {
                 .description(productRequest.description())
                 .skuCode(productRequest.skuCode())
                 .price(productRequest.price())
-                .vendorId(productRequest.vendorId())
                 .category(productRequest.category())
                 .imageUrl(productRequest.imageUrl())
-                .status(productRequest.vendorId() != null ? "PENDING_APPROVAL" : "ACTIVE")
+                .status("ACTIVE")
                 .build();
         productRepository.save(product);
         log.info("Product created successfully with status: {}", product.getStatus());
@@ -48,12 +47,10 @@ public class ProductService {
                 .toList();
     }
 
-    public List<ProductResponse> getProductsByVendor(Long vendorId) {
-        return productRepository.findAll()
-                .stream()
-                .filter(p -> vendorId.equals(p.getVendorId()))
-                .map(this::mapToProductResponse)
-                .toList();
+    public ProductResponse getProductBySkuCode(String skuCode) {
+        Product product = productRepository.findBySkuCode(skuCode)
+                .orElseThrow(() -> new RuntimeException("Product not found with SKU code: " + skuCode));
+        return mapToProductResponse(product);
     }
 
     private ProductResponse mapToProductResponse(Product product) {
@@ -63,7 +60,6 @@ public class ProductService {
                 product.getDescription(),
                 product.getSkuCode(),
                 product.getPrice(),
-                product.getVendorId(),
                 product.getStatus(),
                 product.getCategory(),
                 product.getImageUrl(),

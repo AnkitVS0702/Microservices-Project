@@ -1,7 +1,9 @@
 package com.ankitshiksharthi.microserviceproject.order_service.service;
 
 import com.ankitshiksharthi.microserviceproject.order_service.client.InventoryClient;
+import com.ankitshiksharthi.microserviceproject.order_service.client.ProductClient;
 import com.ankitshiksharthi.microserviceproject.order_service.dto.OrderRequest;
+import com.ankitshiksharthi.microserviceproject.order_service.dto.OrderResponse;
 import com.ankitshiksharthi.microserviceproject.order_service.event.OrderPlacedEvent;
 import com.ankitshiksharthi.microserviceproject.order_service.model.Order;
 import com.ankitshiksharthi.microserviceproject.order_service.repository.OrderRepository;
@@ -10,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -19,6 +22,7 @@ public class OrderService {
 
     private final OrderRepository orderRepository;
     private final InventoryClient inventoryClient;
+    private final ProductClient productClient;
     private final KafkaTemplate<String, OrderPlacedEvent> kafkaTemplate;
 
     public void placeOrder(OrderRequest orderRequest) {
@@ -32,6 +36,7 @@ public class OrderService {
             order.setPrice(orderRequest.price());
             order.setSkuCode(orderRequest.skuCode());
             order.setQuantity(orderRequest.quantity());
+            order.setEmail(orderRequest.userDetails().email());
             orderRepository.save(order);
 
             // Send the message to Kafka Topic
@@ -46,5 +51,31 @@ public class OrderService {
         } else {
             throw new RuntimeException("Product with skuCode " + orderRequest.skuCode() + " not in stock");
         }
+    }
+
+    public List<OrderResponse> getOrdersByEmail(String email) {
+        log.info("Retrieving order history for email: {}", email);
+        return orderRepository.findByEmail(email).stream()
+                .map(order -> {
+                    String productName = "Unknown Product";
+                    try {
+                        var product = productClient.getProductBySkuCode(order.getSkuCode());
+                        if (product != null && product.name() != null) {
+                            productName = product.name();
+                        }
+                    } catch (Exception e) {
+                        log.warn("Failed to fetch product name for SKU: {} - {}", order.getSkuCode(), e.getMessage());
+                    }
+                    return new OrderResponse(
+                            order.getId(),
+                            order.getOrderNumber(),
+                            order.getSkuCode(),
+                            productName,
+                            order.getPrice(),
+                            order.getQuantity(),
+                            order.getCreatedAt()
+                    );
+                })
+                .toList();
     }
 }
