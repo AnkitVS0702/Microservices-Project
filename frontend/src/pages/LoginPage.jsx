@@ -20,8 +20,12 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      await login(email, password);
-      navigate('/', { replace: true });
+      const user = await login(email, password);
+      if (user?.role === 'ADMIN') {
+        navigate('/admin', { replace: true });
+      } else {
+        navigate('/products', { replace: true });
+      }
     } catch (err) {
       const status = err.response?.status;
       if (status === 401) {

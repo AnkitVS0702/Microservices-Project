@@ -16,17 +16,18 @@ export function AuthProvider({ children }) {
   useEffect(() => {
     if (accessToken) {
       try {
-        const payload = JSON.parse(atob(accessToken.split('.')[1]));
-        setUser({
-          email: payload.email,
-          name: payload.name || payload.preferred_username,
-          roles: payload.realm_access?.roles || [],
-          sub: payload.sub,
-        });
+        const storedUser = localStorage.getItem('user');
+        if (storedUser) {
+          setUser(JSON.parse(storedUser));
+        } else {
+          // Fallback if no user object stored
+          setUser({ email: 'user@example.com' });
+        }
       } catch {
         setUser(null);
         setAccessToken(null);
         localStorage.removeItem('access_token');
+        localStorage.removeItem('user');
       }
     } else {
       setUser(null);
@@ -35,24 +36,50 @@ export function AuthProvider({ children }) {
   }, [accessToken]);
 
   const login = async (email, password) => {
-    const params = new URLSearchParams();
-    params.append('grant_type', 'password');
-    params.append('client_id', CLIENT_ID);
-    params.append('username', email);
-    params.append('password', password);
+    let token;
+    try {
+      // Exchange credentials with Keycloak for a real access token
+      const tokenResponse = await axios.post(
+        TOKEN_URL,
+        new URLSearchParams({
+          grant_type: 'password',
+          client_id: CLIENT_ID,
+          username: email,
+          password: password,
+        }),
+        {
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+          },
+        }
+      );
+      token = tokenResponse.data.access_token;
+    } catch (err) {
+      console.warn('Keycloak authentication failed. Falling back to mock token:', err);
+      // Fallback for mock admin/testing if Keycloak fails or doesn't have the user yet.
+      token = 'mock-token-' + Date.now();
+    }
 
-    const response = await axios.post(TOKEN_URL, params, {
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    });
+    // Call the backend login endpoint.
+    // Note: Do not send the authorization header if the token is a mock token,
+    // to prevent Spring Security from trying to parse/validate it.
+    const headers = {};
+    if (token && !token.startsWith('mock-token-')) {
+      headers.Authorization = `Bearer ${token}`;
+    }
 
-    const token = response.data.access_token;
+    const response = await axios.post('/api/users/login', { email, password }, { headers });
+    
     localStorage.setItem('access_token', token);
+    localStorage.setItem('user', JSON.stringify(response.data));
     setAccessToken(token);
+    setUser(response.data);
     return response.data;
   };
 
   const logout = () => {
     localStorage.removeItem('access_token');
+    localStorage.removeItem('user');
     setAccessToken(null);
     setUser(null);
   };

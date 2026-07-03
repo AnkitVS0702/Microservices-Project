@@ -6,24 +6,26 @@ import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import HomePage from './pages/HomePage';
 
+import AdminDashboard from './pages/AdminDashboard';
+import ProductList from './pages/ProductList';
+import CartPage from './pages/CartPage';
+
 export default function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
-        <div className="min-h-screen bg-background">
+        <div className="min-h-screen bg-background flex flex-col">
           <Navbar />
-          <Routes>
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/register" element={<RegisterPage />} />
-            <Route
-              path="/"
-              element={
-                <ProtectedRoute>
-                  <HomePage />
-                </ProtectedRoute>
-              }
-            />
-          </Routes>
+          <main className="flex-grow">
+            <Routes>
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="/register" element={<RegisterPage />} />
+              <Route path="/admin" element={<ProtectedRoute><AdminDashboard /></ProtectedRoute>} />
+              <Route path="/products" element={<ProductList />} />
+              <Route path="/cart" element={<ProtectedRoute><CartPage /></ProtectedRoute>} />
+              <Route path="/" element={<ProtectedRoute><HomePage /></ProtectedRoute>} />
+            </Routes>
+          </main>
         </div>
       </AuthProvider>
     </BrowserRouter>

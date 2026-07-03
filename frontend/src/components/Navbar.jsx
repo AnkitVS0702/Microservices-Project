@@ -20,6 +20,21 @@ export default function Navbar() {
         <div className="flex items-center gap-6">
           {isAuthenticated ? (
             <>
+              {user?.role === 'ADMIN' && (
+                <Link to="/admin" className="text-sm font-medium text-text-secondary hover:text-text-primary transition-colors">
+                  Admin Dashboard
+                </Link>
+              )}
+              {user?.role !== 'ADMIN' && (
+                <>
+                  <Link to="/products" className="text-sm font-medium text-text-secondary hover:text-text-primary transition-colors">
+                    Products
+                  </Link>
+                  <Link to="/cart" className="text-sm font-medium text-text-secondary hover:text-text-primary transition-colors">
+                    Cart
+                  </Link>
+                </>
+              )}
               <span className="text-sm text-text-secondary">
                 {user?.email}
               </span>
